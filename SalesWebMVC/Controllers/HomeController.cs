@@ -18,6 +18,14 @@ namespace SalesWebMVC.Controllers
             return View();
         }
 
+        public IActionResult About()
+        {
+            ViewData["Message"] = "App Web de Vendas padrão MVC.";
+            ViewData["Professor"] = "Heleno Cardoso da Silva Filho.";
+            ViewData["Email"] = "helenocardosofilho@gmail.com";
+
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
