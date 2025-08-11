@@ -69,10 +69,21 @@ namespace SalesWebMVC.Controllers
             //return RedirectToAction("Index");// Ou
             return RedirectToAction(nameof(Index));
         }
-        // GET: Departments
-        //    public async Task<IActionResult> Index()
-        //  {
-        //    return View(await _context.Department.ToListAsync());
-        // }
+
+        public IActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var obj = _sellerService.FindById(id.Value);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
     }
 }
