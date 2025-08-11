@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NuGet.Protocol.Plugins;
 using SalesWebMVC.Data;
 using SalesWebMVC.Models;
 using System.Linq;
+using SalesWebMVC.Services.Exceptions;
 
 namespace SalesWebMVC.Services
 {
@@ -11,14 +13,14 @@ namespace SalesWebMVC.Services
     {
         private readonly SalesWebMVCContext _context;
 
-        public SellerService (SalesWebMVCContext context)
+        public SellerService(SalesWebMVCContext context)
         {
             _context = context;
         }
 
         public List<Seller> FindAll()
         {
-            return _context.Seller.ToList(); 
+            return _context.Seller.ToList();
         }
 
         public void Insert(Seller seller)
@@ -44,6 +46,24 @@ namespace SalesWebMVC.Services
             var obj = _context.Seller.Find(sellerId);
             _context.Seller.Remove(obj);
             _context.SaveChanges();
+        }
+
+        public void Update(Seller seller)
+        {
+            if (!_context.Seller.Any(x => x.Id == seller.Id))
+            {
+                throw new NotFoundException("Id not found ...");
+            }
+
+            try
+            {
+                _context.Update(seller);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbConcurrencyException(e.Message);
+            }
         }
     }
 }
