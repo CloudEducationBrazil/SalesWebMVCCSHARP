@@ -44,6 +44,31 @@ namespace SalesWebMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public IActionResult Delete(int? id)
+        {
+            if (id == null) {
+                return NotFound();
+            }
+
+            var obj = _sellerService.FindById(id.Value);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
+
+        // POST
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Para previnir ataque XRSF / CSRF
+        public IActionResult Delete(int id)
+        {
+            _sellerService.Remove(id);
+
+            //return RedirectToAction("Index");// Ou
+            return RedirectToAction(nameof(Index));
+        }
         // GET: Departments
         //    public async Task<IActionResult> Index()
         //  {
