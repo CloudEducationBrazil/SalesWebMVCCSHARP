@@ -42,6 +42,13 @@ namespace SalesWebMVC.Controllers
         [ValidateAntiForgeryToken] // Para previnir ataque XRSF / CSRF
         public IActionResult Create(Seller seller)
         {
+            if (!ModelState.IsValid)
+            {   
+                var departments = _departmentService.FindAll();
+                var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments }; 
+                return View(viewModel);
+            }
+
             _sellerService.Insert(seller);
 
             //return RedirectToAction("Index");// Ou
@@ -54,7 +61,7 @@ namespace SalesWebMVC.Controllers
             if (id == null)
             {
                 //return NotFound();
-                return RedirectToAction(nameof(Error), new {message = "Id not provided ..."});
+                return RedirectToAction(nameof(Error), new { message = "Id not provided ..." });
             }
 
             var obj = _sellerService.FindById(id.Value);
@@ -125,6 +132,11 @@ namespace SalesWebMVC.Controllers
         [ValidateAntiForgeryToken] // Para previnir ataque XRSF / CSRF
         public IActionResult Edit(int? id, Seller seller)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(seller);
+            }
+
             if (id == null)
             {
                 //NotFound();
@@ -157,7 +169,7 @@ namespace SalesWebMVC.Controllers
         // View Error
         public IActionResult Error(string message)
         {
-            var viewModel = new ErrorViewModel{ Message = message, RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier};
+            var viewModel = new ErrorViewModel { Message = message, RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier };
 
             return View(viewModel);
         }
