@@ -3,11 +3,23 @@ using Microsoft.Extensions.DependencyInjection;
 using SalesWebMVC.Data;
 using SalesWebMVC.Services;
 
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Adicione o contexto do banco de dados usando MySQL
 var connectionString = builder.Configuration.GetConnectionString("SalesWebMVCContext");
+
+// Heleno
+var enUS = new CultureInfo("en-US");
+
+// Heleno
+var localizationOptions = new RequestLocalizationOptions { 
+        DefaultRequestCulture = new RequestCulture(enUS),
+        SupportedCultures = new List<CultureInfo> {enUS},
+        SupportedUICultures = new List<CultureInfo> {enUS}
+};
 
 builder.Services.AddDbContext<SalesWebMVCContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 34)), builder => 
@@ -24,6 +36,9 @@ builder.Services.AddScoped<SellerService>();
 builder.Services.AddScoped<DepartmentService>();
 
 var app = builder.Build();
+
+// Heleno
+app.UseRequestLocalization(localizationOptions);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
